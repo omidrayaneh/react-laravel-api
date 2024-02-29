@@ -52,6 +52,7 @@ const Login = () => {
         toast.error(error.response.data.message);
       } else {
         setErrorMessage(error.response.data.errors);
+         toast.error(error.response.data.message);
 
         console.log(error.response.data.errors); // Log other types of errors
       }
