@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Axios from "../api/axios";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("omidrayaneh@gmail.com");
   const [password, setPassword] = useState("password");
-  const [errorMessage, setErrorMessage] = useState(""); 
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   // const handleLogin = async (e) => {
@@ -22,7 +23,6 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      
       // Send a GET request to the route responsible for CSRF token and await the response
       const csrfResponse = await Axios.get("/sanctum/csrf-cookie");
 
@@ -42,27 +42,28 @@ const Login = () => {
       setPassword("");
       setErrorMessage(""); // Clear error message on successful login
       navigate("/");
+      toast.success("logged in successfully");
     } catch (error) {
       // Handle errors if any
-     // If error is due to invalid credentials, show error message under the fields
-     if (error.response && error.response.status === 401) {
-      setErrorMessage("Invalid email or password");
-    } else {
-      setErrorMessage(error.response.data.errors);
+      // If error is due to invalid credentials, show error message under the fields
+      if (error.response && error.response.status === 422) {
+        //setErrorMessage("Invalid email or password");
+        // toast.error(error.response.data.errors);
+        toast.error(error.response.data.message);
+      } else {
+        setErrorMessage(error.response.data.errors);
 
-      console.log(error.response.data.errors); // Log other types of errors
-
-    }
+        console.log(error.response.data.errors); // Log other types of errors
+      }
     }
   };
 
-  const renderErrors = (field) => (
+  const renderErrors = (field) =>
     errorMessage?.[field]?.map((error, index) => (
       <div key={index} className="text-red-500 my-2 rounded p-2 bg-danger">
         {error}
       </div>
-    ))
-  )
+    ));
 
   return (
     <section className="bg-[#F4F7FF] py-20 lg:py-[120px]">
@@ -110,7 +111,7 @@ const Login = () => {
                   {/* <div className="flex">
                     <span className="text-red-400 text-sm m-2 p-2">{renderErrors('email')}</span>
                   </div> */}
-                  {renderErrors("email")} 
+                  {renderErrors("email")}
                 </div>
                 <div className="mb-4">
                   <input
@@ -137,7 +138,7 @@ const Login = () => {
                   {/* <div className="flex">
                     <span className="text-red-400 text-sm m-2 p-2">{renderErrors('password')}</span>
                   </div> */}
-                   {renderErrors("password")} 
+                  {renderErrors("password")}
                 </div>
                 <div className="mb-10">
                   <button
