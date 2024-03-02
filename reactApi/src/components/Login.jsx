@@ -46,25 +46,26 @@ const Login = () => {
     } catch (error) {
       // Handle errors if any
       // If error is due to invalid credentials, show error message under the fields
-      if (error.response && error.response.status === 422) {
-        //setErrorMessage("Invalid email or password");
+    //  if (error.response && error.response.status === 422) {
+      if ( error.response.status === 422) {
+        setErrorMessage(error.response.data.errors);
         // toast.error(error.response.data.errors);
-        toast.error(error.response.data.message);
+       // toast.error(error.response.data.message);
       } else {
         setErrorMessage(error.response.data.errors);
-         toast.error(error.response.data.message);
+        // toast.error(error.response.data.message);
 
-        console.log(error.response.data.errors); // Log other types of errors
+       // console.log(error.response.data.errors); // Log other types of errors
       }
     }
   };
 
-  const renderErrors = (field) =>
-    errorMessage?.[field]?.map((error, index) => (
-      <div key={index} className="text-red-500 my-2 rounded p-2 bg-danger">
-        {error}
-      </div>
-    ));
+  // const renderErrors = (field) =>
+  //   errorMessage?.[field]?.map((error, index) => (
+  //     <div key={index} className="text-red-500 my-2 rounded p-2 bg-danger">
+  //       {error}
+  //     </div>
+  //   ));
 
   return (
     <section className="bg-[#F4F7FF] py-20 lg:py-[120px]">
@@ -109,10 +110,10 @@ const Login = () => {
                   "
                   />
 
-                  {/* <div className="flex">
-                    <span className="text-red-400 text-sm m-2 p-2">{renderErrors('email')}</span>
-                  </div> */}
-                  {renderErrors("email")}
+                 { errorMessage.email &&<div className="flex">
+                    <span className="text-red-400 text-sm m-2 p-2">{errorMessage.email}</span>
+                  </div>}
+                  {/* {renderErrors("email")} */}
                 </div>
                 <div className="mb-4">
                   <input
@@ -136,10 +137,10 @@ const Login = () => {
                   "
                   />
 
-                  {/* <div className="flex">
-                    <span className="text-red-400 text-sm m-2 p-2">{renderErrors('password')}</span>
-                  </div> */}
-                  {renderErrors("password")}
+                  { errorMessage.password &&<div className="flex">
+                    <span className="text-red-400 text-sm m-2 p-2">{errorMessage.password}</span>
+                  </div>}
+                  {/* {renderErrors("password")} */}
                 </div>
                 <div className="mb-10">
                   <button
