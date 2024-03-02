@@ -4,30 +4,23 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 
 const Register = () => {
-
   const [email, setEmail] = useState("omidrayaneh@gmail.com");
   const [name, setName] = useState("omid");
   const [password, setPassword] = useState("password");
-  const [password_confirmation, setPassword_confirmation] = useState("password");
+  const [password_confirmation, setPassword_confirmation] =
+    useState("password");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const csrfResponse = () => Axios.get("/sanctum/csrf-cookie");
 
   const handleRegister = async (e) => {
     e.preventDefault();
+     // Send a GET request to the route responsible for CSRF token and await the response
+    await csrfResponse();
+    
     try {
-      // Send a GET request to the route responsible for CSRF token and await the response
-      const csrfResponse = await Axios.get("/sanctum/csrf-cookie");
-
-      // Send a POST request with CSRF token added to the header and await the response
-      await Axios.post(
-        "/register",
-        { name, email,password,password_confirmation },
-        {
-          headers: {
-            "X-CSRF-TOKEN": csrfResponse.data.csrf_token,
-          },
-        }
-      );
+      //Send a POST request with CSRF token added to the header and await the response
+      await Axios.post("/register",{ name, email,password,password_confirmation });
 
       // Perform actions after successful login
       setEmail("");
@@ -41,12 +34,12 @@ const Register = () => {
       if (error.response && error.response.status === 422) {
         setErrorMessage(error.response.data.errors);
         // toast.error(error.response.data.errors);
-       // toast.error(error.response.data.message);
+        // toast.error(error.response.data.message);
       } else {
         setErrorMessage(error.response.data.errors);
         // toast.error(error.response.data.message);
 
-      //  console.log(error.response.data.errors); // Log other types of errors
+        //  console.log(error.response.data.errors); // Log other types of errors
       }
     }
   };
@@ -80,7 +73,7 @@ const Register = () => {
             >
               <div className="mb-10 text-center md:mb-16">Laraveller</div>
               <form onSubmit={handleRegister}>
-              <div className="mb-4">
+                <div className="mb-4">
                   <input
                     type="text"
                     value={name}
@@ -101,14 +94,15 @@ const Register = () => {
                     focus-visible:shadow-none
                   "
                   />
-                  
-                 { errorMessage.name &&  <div className="flex">
+
+                  {errorMessage.name && (
+                    <div className="flex">
                       <span className="text-red-400 text-sm m-2 p-2">
                         {errorMessage.name}
                       </span>
-                    </div>}
-                     {/* {renderErrors("name")} */}
-                  
+                    </div>
+                  )}
+                  {/* {renderErrors("name")} */}
                 </div>
                 <div className="mb-4">
                   <input
@@ -131,14 +125,15 @@ const Register = () => {
                     focus-visible:shadow-none
                   "
                   />
-                  
-             {errorMessage.email &&<div className="flex">
+
+                  {errorMessage.email && (
+                    <div className="flex">
                       <span className="text-red-400 text-sm m-2 p-2">
                         {errorMessage.email}
                       </span>
-                    </div>}
-                     {/* {renderErrors("email")} */}
-                  
+                    </div>
+                  )}
+                  {/* {renderErrors("email")} */}
                 </div>
                 <div className="mb-4">
                   <input
@@ -161,13 +156,15 @@ const Register = () => {
                     focus-visible:shadow-none
                   "
                   />
-                  
-                 {errorMessage.password && <div className="flex">
+
+                  {errorMessage.password && (
+                    <div className="flex">
                       <span className="text-red-400 text-sm m-2 p-2">
                         {errorMessage.password}
                       </span>
-                    </div>}
-                     {/* {renderErrors("password")} */}
+                    </div>
+                  )}
+                  {/* {renderErrors("password")} */}
                 </div>
                 <div className="mb-4">
                   <input
@@ -190,14 +187,15 @@ const Register = () => {
                     focus-visible:shadow-none
                   "
                   />
-                  
-                   {errorMessage.password_confirmation && <div className="flex">
+
+                  {errorMessage.password_confirmation && (
+                    <div className="flex">
                       <span className="text-red-400 text-sm m-2 p-2">
                         {errorMessage.password_confirmation}
                       </span>
-                    </div>}
-                     {/* {renderErrors("password_confirmation")} */}
-                  
+                    </div>
+                  )}
+                  {/* {renderErrors("password_confirmation")} */}
                 </div>
                 <div className="mb-10">
                   <button

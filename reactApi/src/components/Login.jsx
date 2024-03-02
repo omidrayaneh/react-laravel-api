@@ -9,33 +9,19 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  // const handleLogin = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     await Axios.post("/login", { email, password });
-  //     setEmail("");
-  //     setPassword("");
-  //     navigate("/");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const csrfResponse = () => Axios.get("/sanctum/csrf-cookie");
+
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    // Send a GET request to the route responsible for CSRF token and await the response
+    await csrfResponse();
+
     try {
-      // Send a GET request to the route responsible for CSRF token and await the response
-      const csrfResponse = await Axios.get("/sanctum/csrf-cookie");
+
 
       // Send a POST request with CSRF token added to the header and await the response
-      await Axios.post(
-        "/login",
-        { email, password },
-        {
-          headers: {
-            "X-CSRF-TOKEN": csrfResponse.data.csrf_token,
-          },
-        }
-      );
+      await Axios.post("/login",{ email, password },);
 
       // Perform actions after successful login
       setEmail("");
@@ -60,12 +46,6 @@ const Login = () => {
     }
   };
 
-  // const renderErrors = (field) =>
-  //   errorMessage?.[field]?.map((error, index) => (
-  //     <div key={index} className="text-red-500 my-2 rounded p-2 bg-danger">
-  //       {error}
-  //     </div>
-  //   ));
 
   return (
     <section className="bg-[#F4F7FF] py-20 lg:py-[120px]">
