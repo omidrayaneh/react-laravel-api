@@ -1,51 +1,17 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Axios from "../api/axios";
-import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import useAuthContext from "../context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("omidrayaneh@gmail.com");
   const [password, setPassword] = useState("password");
-  const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate();
 
-  const csrfResponse = () => Axios.get("/sanctum/csrf-cookie");
+  const {login , errors}  = useAuthContext()
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    // Send a GET request to the route responsible for CSRF token and await the response
-    await csrfResponse();
-
-    try {
-
-
-      // Send a POST request with CSRF token added to the header and await the response
-      await Axios.post("/login",{ email, password },);
-
-      // Perform actions after successful login
-      setEmail("");
-      setPassword("");
-      setErrorMessage(""); // Clear error message on successful login
-      navigate("/");
-      toast.success("logged in successfully");
-    } catch (error) {
-      // Handle errors if any
-      // If error is due to invalid credentials, show error message under the fields
-    //  if (error.response && error.response.status === 422) {
-      if ( error.response.status === 422) {
-        setErrorMessage(error.response.data.errors);
-        // toast.error(error.response.data.errors);
-       // toast.error(error.response.data.message);
-      } else {
-        setErrorMessage(error.response.data.errors);
-        // toast.error(error.response.data.message);
-
-       // console.log(error.response.data.errors); // Log other types of errors
-      }
-    }
+    login({email,password})
   };
-
 
   return (
     <section className="bg-[#F4F7FF] py-20 lg:py-[120px]">
@@ -90,9 +56,13 @@ const Login = () => {
                   "
                   />
 
-                 { errorMessage.email &&<div className="flex">
-                    <span className="text-red-400 text-sm m-2 p-2">{errorMessage.email}</span>
-                  </div>}
+                  {errors.email && (
+                    <div className="flex">
+                      <span className="text-red-400 text-sm m-2 p-2">
+                        {errors.email}
+                      </span>
+                    </div>
+                  )}
                   {/* {renderErrors("email")} */}
                 </div>
                 <div className="mb-4">
@@ -117,9 +87,13 @@ const Login = () => {
                   "
                   />
 
-                  { errorMessage.password &&<div className="flex">
-                    <span className="text-red-400 text-sm m-2 p-2">{errorMessage.password}</span>
-                  </div>}
+                  {errors.password && (
+                    <div className="flex">
+                      <span className="text-red-400 text-sm m-2 p-2">
+                        {errors.password}
+                      </span>
+                    </div>
+                  )}
                   {/* {renderErrors("password")} */}
                 </div>
                 <div className="mb-10">
